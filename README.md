@@ -4,7 +4,7 @@ Pipeline de dados que trata os microdados públicos do SIM e do SINASC (2022 a 2
 
 **Disciplina:** Big Data e Analytics · **ODS:** 5 (Igualdade de Gênero) e 18 (Igualdade Étnico-Racial)
 **Equipe:** Alison Andrade Rocha, Lívia Alves de Souza e Vitor Carvalho Ferreira
-**Dashboard:** [cole aqui o link do Streamlit Cloud]
+**Dashboard:** [https://painel-epidemiologico-saude-materna-bigdata-ctr2b2hwvsbsxqmhca.streamlit.app/](https://painel-epidemiologico-saude-materna-bigdata-ctr2b2hwvsbsxqmhca.streamlit.app/)
 
 ---
 
@@ -177,13 +177,9 @@ Guardar numerador e denominador separados garante que o painel some os dois no r
 
 ## 7. Dashboard
 
-**Acesso:** [cole aqui o link do Streamlit Cloud]
+**Acesso:** [https://painel-epidemiologico-saude-materna-bigdata-ctr2b2hwvsbsxqmhca.streamlit.app/](https://painel-epidemiologico-saude-materna-bigdata-ctr2b2hwvsbsxqmhca.streamlit.app/)
 
 Desenvolvido em Streamlit, com gráficos em Plotly, na pasta `dashboard/`. A cada interação, o painel consulta o PostgreSQL da Aiven com o usuário `dashboard_leitura`, que só tem permissão de leitura nas views de indicadores. O cabeçalho mostra o horário da última consulta ao banco.
-
-[inserir print da aba "Mortalidade materna"]
-
-[inserir print da aba "Violência obstétrica"]
 
 ### Estrutura
 
