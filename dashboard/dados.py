@@ -1,15 +1,3 @@
-"""
-Acesso ao banco (PostgreSQL na Aiven).
-
-O dashboard lê só as views de indicadores (etl/sql/02_views_indicadores.sql)
-com um usuário somente leitura. Toda consulta vai ao banco; o cache guarda o
-resultado por 5 minutos para não repetir a mesma consulta a cada clique.
-
-A conexão vem, nesta ordem, de:
-1. variável de ambiente DATABASE_URL (no Streamlit Cloud, vem dos Secrets)
-2. .streamlit/secrets.toml (execução local)
-3. arquivo .env na raiz do projeto
-"""
 import os
 from datetime import datetime
 from pathlib import Path
@@ -23,7 +11,6 @@ RAIZ = Path(__file__).resolve().parents[1]
 FUSO = ZoneInfo("America/Bahia")
 TTL = 300
 
-# Colunas pelas quais o painel pode agrupar (evita SQL montado com texto livre)
 AGRUPAVEIS = {
     "ano", "regiao", "uf_sigla", "uf_nome", "cod_mun_res", "municipio",
     "raca_cor", "raca_cor_agregada", "faixa_etaria", "faixa_ordem",
@@ -47,7 +34,6 @@ class BancoIndisponivel(Exception):
 
 
 def _url() -> str:
-    # No Streamlit Cloud, os Secrets também viram variáveis de ambiente
     if os.getenv("DATABASE_URL"):
         return os.environ["DATABASE_URL"]
     arquivos = [RAIZ / ".streamlit" / "secrets.toml", Path.home() / ".streamlit" / "secrets.toml"]
@@ -129,7 +115,6 @@ def mortalidade(f: dict, por: tuple = (), ignorar: tuple = ()) -> pd.DataFrame:
 
 @st.cache_data(ttl=TTL, show_spinner=False)
 def parto(f: dict, por: tuple = (), ignorar: tuple = ()) -> pd.DataFrame:
-    # Os dados de parto vão até UF: o filtro de município não se aplica
     return _agrupado("vw_ind_parto", SOMAS_PARTO, f, por, ignorar, False)
 
 
@@ -137,6 +122,14 @@ def parto(f: dict, por: tuple = (), ignorar: tuple = ()) -> pd.DataFrame:
 def causas(f: dict) -> pd.DataFrame:
     where, params = _where(f, set(), True)
     sql = f"SELECT grupo_causa, count(*) AS obitos FROM vw_ind_causas {where} GROUP BY grupo_causa ORDER BY obitos DESC"
+    return consultar(sql, tuple(params))
+
+
+@st.cache_data(ttl=TTL, show_spinner=False)
+def causas_detalhe(f: dict) -> pd.DataFrame:
+    where, params = _where(f, set(), True)
+    sql = (f"SELECT cod_causa, descricao, count(*) AS obitos FROM vw_ind_causas {where} "
+           f"GROUP BY cod_causa, descricao ORDER BY obitos DESC")
     return consultar(sql, tuple(params))
 
 
